@@ -1,0 +1,74 @@
+{
+	"easycom": {
+		"autoscan": true,
+		"custom": {
+			// uview-ui
+			"^u-(.*)": "uview-ui/components/u-$1/u-$1.vue",
+			// @dcloudio
+			"^uni-(.*)": "@dcloudio/uniui/lib/uni-$1/uni-$1.vue"
+		}
+	},
+	"pages": [ //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
+		{	//书架
+			"path": "pages/book_case/bookCase",
+			"style": {
+				"enablePullDownRefresh": false,
+				"navigationStyle":"custom",
+				"navigationBarTextStyle":"black"
+				
+			}
+
+		}
+	    ,{
+			//书城
+            "path" : "pages/books/books",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "",
+                "enablePullDownRefresh": false
+            }
+            
+        }
+        ,{
+			//个人中心
+            "path" : "pages/proflie/proflie",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "",
+                "enablePullDownRefresh": false
+            }
+            
+        }
+    ],
+	"globalStyle": {
+		"navigationBarBackgroundColor":"#F1F1F1",
+		"navigationStyle": "default",//取消默认导航栏
+		//在App中，取消安卓下拉刷新灰色半弧形效果
+		"app-plus" : {
+			"bounce" : "none"
+		}
+	},
+	"tabBar": {
+	    "color": "#dbdbdb",
+	    "selectedColor": "#5EDAFE",
+	    "borderStyle": "black",
+	    "backgroundColor": "#ffffff",
+	    "list": [{
+	        "pagePath": "pages/book_case/bookCase",
+	        "iconPath": "static/img/tabbar/book_case.png",
+	        "selectedIconPath": "static/img/tabbar/book_case_active.png",
+	        "text": "书架"
+	    }, {
+	        "pagePath": "pages/books/books",
+	        "iconPath": "static/img/tabbar/books.png",
+	        "selectedIconPath": "static/img/tabbar/books_active.png",
+	        "text": "书城"
+	    },{
+	        "pagePath": "pages/proflie/proflie",
+	        "iconPath": "static/img/tabbar/proflie.png",
+	        "selectedIconPath": "static/img/tabbar/profile_acitve.png",
+	        "text": "我的"
+	    }
+		]
+	}
+}
