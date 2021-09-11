@@ -70,12 +70,14 @@
 		text-align: center;
 		display: flex;
 		flex-wrap: wrap;
+		flex: 1;
+		// justify-content: center;
 		margin: 0 20rpx;
 		.data {
 			position: relative;
 			.item ,.add-books{
 				border-radius: 8rpx;
-				width: 180rpx;
+				width: 188rpx;
 				height: 260rpx;
 				background-color: red;
 				margin: 12rpx 24rpx;
@@ -96,7 +98,7 @@
 		.is-delete{
 			position: absolute;
 			border-radius: 8rpx;
-			width: 180rpx;
+			width: 188rpx;
 			height: 260rpx;
 			margin: 12rpx 24rpx;
 			background-color: rgba($color: #000000, $alpha: .7);

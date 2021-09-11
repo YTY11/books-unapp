@@ -13,7 +13,6 @@
 			"path": "pages/book_case/bookCase",
 			"style": {
 				"enablePullDownRefresh": false,
-				"navigationStyle":"custom",
 				"navigationBarTextStyle":"black"
 				
 			}
@@ -25,7 +24,8 @@
             "style" :                                                                                    
             {
                 "navigationBarTitleText": "",
-                "enablePullDownRefresh": false
+                "enablePullDownRefresh": false,
+				"navigationBarTextStyle":"black"
             }
             
         }
@@ -38,11 +38,28 @@
                 "enablePullDownRefresh": false
             }
             
-        }
+        },
+		{
+			//书籍详情页面
+		    "path" : "pages/detail/detail",
+		    "style" :                                                                                    
+		    {
+		        "navigationBarTitleText": "书籍详情",
+		        "enablePullDownRefresh": false,
+				"navigationStyle":"default",
+				"navigationBarTextStyle":"black",
+				"navigationBarBackgroundColor":"#FFFFFF",
+				"navigationBarShadow":{
+					"colorType":"grey",
+					"disableScroll": true
+				}
+		    }
+		    
+		}
     ],
 	"globalStyle": {
 		"navigationBarBackgroundColor":"#F1F1F1",
-		"navigationStyle": "default",//取消默认导航栏
+		"navigationStyle": "custom",//取消默认导航栏
 		//在App中，取消安卓下拉刷新灰色半弧形效果
 		"app-plus" : {
 			"bounce" : "none"
