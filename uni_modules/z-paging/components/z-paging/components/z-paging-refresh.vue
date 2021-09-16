@@ -1,22 +1,17 @@
-<!-- z-paging -->
-<!-- github地址:https://github.com/SmileZXLee/uni-z-paging -->
-<!-- dcloud地址:https://ext.dcloud.net.cn/plugin?id=3935 -->
-<!-- 反馈QQ群：790460711 -->
+<!-- [z-paging]下拉刷新view -->
 
-<!-- 下拉刷新view -->
 <template>
 	<view style="height: 100%;">
 		<view
-			:class="['zp-r-container',{'zp-r-container-padding':showUpdateTime}]"
-			style="height: 100%;">
+			:class="['zp-r-container',{'zp-r-container-padding':showUpdateTime}]" style="height: 100%;">
 			<view class="zp-r-left">
 				<image v-if="status!==2" :class="refresherLeftImageClass"
-					:style="[{width: showUpdateTime?'36rpx':'30rpx',height: showUpdateTime?'36rpx':'30rpx','margin-right': showUpdateTime?'20rpx':'8rpx'},imgStyle]"
-					:src="defaultThemeStyle==='white'?base64ArrowWhite:base64Arrow">
+					:style="[{width: showUpdateTime?'36rpx':'30rpx',height: showUpdateTime?'36rpx':'30rpx','margin-right': showUpdateTime?'20rpx':'9rpx'},imgStyle]"
+					:src="defaultThemeStyle==='white'?(status===3?base64SuccessWhite:base64ArrowWhite):(status===3?base64Success:base64Arrow)">
 				</image>
 				<!-- #ifndef APP-NVUE -->
 				<image v-else class="zp-line-loading-image zp-r-left-image"
-					:style="[{width: showUpdateTime?'36rpx':'30rpx',height: showUpdateTime?'36rpx':'30rpx','margin-right': showUpdateTime?'20rpx':'8rpx'},imgStyle]"
+					:style="[{width: showUpdateTime?'36rpx':'30rpx',height: showUpdateTime?'36rpx':'30rpx','margin-right': showUpdateTime?'20rpx':'9rpx'},imgStyle]"
 					:src="defaultThemeStyle==='white'?base64FlowerWhite:base64Flower">
 				</image>
 				<!-- #endif -->
@@ -56,6 +51,8 @@
 				base64ArrowWhite: zStatic.base64ArrowWhite,
 				base64Flower: zStatic.base64Flower,
 				base64FlowerWhite: zStatic.base64FlowerWhite,
+				base64Success: zStatic.base64Success,
+				base64SuccessWhite: zStatic.base64SuccessWhite,
 				refresherTimeText: '',
 				leftImageLoaded: false
 			};
@@ -68,6 +65,7 @@
 			'defaultText': {},
 			'pullingText': {},
 			'refreshingText': {},
+			'completeText': {},
 			'showUpdateTime': {
 				default: false
 			},
@@ -88,23 +86,26 @@
 				return {
 					0: this.defaultText,
 					1: this.pullingText,
-					2: this.refreshingText
+					2: this.refreshingText,
+					3: this.completeText
 				};
 			},
 			refresherLeftImageClass() {
-				let refresherLeftImageClass = '';
+				if(this.status === 3){
+					return 'zp-r-left-image-no-transform .zp-r-left-image-pre-size';
+				}
+				let refresherLeftImageClass = 'zp-r-left-image ';
 				if (this.status === 0) {
 					if (this.leftImageLoaded) {
-						refresherLeftImageClass = 'zp-r-left-image zp-r-arrow-down';
+						refresherLeftImageClass += 'zp-r-arrow-down';
 					} else {
 						this.leftImageLoaded = true;
-						refresherLeftImageClass =
-							'zp-r-left-image zp-r-arrow-down-no-duration';
+						refresherLeftImageClass += 'zp-r-arrow-down-no-duration';
 					}
 				} else {
-					refresherLeftImageClass = 'zp-r-left-image zp-r-arrow-top';
+					refresherLeftImageClass += 'zp-r-arrow-top';
 				}
-				return refresherLeftImageClass;
+				return refresherLeftImageClass + ' zp-r-left-image-pre-size';
 			},
 			refresherRightTextStyle() {
 				let refresherRightTextStyle = {};
@@ -142,7 +143,7 @@
 	}
 </script>
 
-<style>
+<style scoped>
 	@import "../css/z-paging-static.css";
 
 	.zp-r-container {
@@ -174,13 +175,29 @@
 		transform: rotate(180deg);
 		margin-top: 2rpx;
 		/* #endif */
-		/* #ifdef MP-ALIPAY */
-		margin-top: 0rpx;
+		/* #ifdef APP-NVUE */
+		transition-duration: .2s;
+		transition-property: transform;
+		color: #666666;
+		/* #endif */
+	}
+	
+	.zp-r-left-image-no-transform {
+		/* #ifndef APP-NVUE */
+		margin-top: 2rpx;
 		/* #endif */
 		/* #ifdef APP-NVUE */
 		transition-duration: .2s;
 		transition-property: transform;
 		color: #666666;
+		/* #endif */
+	}
+	
+	.zp-r-left-image-pre-size{
+		/* #ifndef APP-NVUE */
+		width: 30rpx;
+		width: 30rpx;
+		overflow: hidden;
 		/* #endif */
 	}
 

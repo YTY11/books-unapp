@@ -2,7 +2,7 @@
 	<view class="book-case">
 			
 		<!-- 展示书架书籍 -->
-		<books-data/>
+		<books-data :bookList="dataList"/>
 		
 	</view>
 </template>
@@ -22,6 +22,14 @@
 		onHide(){
 			this.$bus.$emit('isLongTap',false)
 		},
+		onShow() {
+			let bookCaseData = uni.getStorageSync('BOOK_CASE_DATA')
+			
+			if (typeof bookCaseData !== 'object') {
+				bookCaseData = []
+			}
+			this.dataList = bookCaseData
+		},
 		components:{
 			BooksData
 		},
@@ -32,9 +40,12 @@
 		},
 
 		mounted() {
-			// this.$bus.$on('isLongTap',(data)=>{
-			// 	this.isShowDelete = data
-			// })
+			this.$bus.$on('goBooks',()=>{
+				//跳转到书城
+				uni.switchTab({
+				    url: '/pages/books/books'
+				});
+			})
 		}
 	}
 </script>

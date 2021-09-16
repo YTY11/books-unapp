@@ -1,9 +1,9 @@
 <template>
-	<z-paging :refresher-enabled="!isShowDelete" auto-hide-loading-after-first-loaded  loading-more-no-more-text="~~~~~~~~我是有底线的~~~~~~~~" auto-show-back-to-top back-to-top-bottom="160rpx" back-to-top-img="../../static/img/top/top.png" class="z-paging" ref="paging" v-model="dataList" @query="queryList" empty-view-text="书架空空如也,快去书城挑选吧!">
+	<z-paging :refresher-enabled="!isShowDelete" auto-hide-loading-after-first-loaded  loading-more-no-more-text="我是有底线的" auto-show-back-to-top back-to-top-bottom="160rpx" back-to-top-img="../../static/img/top/top.png" class="z-paging" ref="paging" v-model="dataList" @query="queryList" empty-view-text="书架空空如也,快去书城挑选吧!">
 		
 		<view class="status_bar" slot="top">
 			<view class="books-case-top" v-if="!isShowDelete">
-				<u-search placeholder="搜索书名 · 作者" input-align="center" margin="12rpx 0" :show-action="false" v-model="keyword">
+				<u-search @change="searchChange" placeholder="搜索书名 · 作者" input-align="center" margin="12rpx 0" :show-action="false" v-model="keyword">
 				</u-search>
 				<u-notice-bar color="#3FD1FC" type="primary" mode="horizontal" :list="list"></u-notice-bar>
 			</view>
@@ -26,15 +26,26 @@
 </template>
 
 <script>
+	
 	//子组件
 	import BooksDataItem from './booksDataItem.vue'
 	//下拉刷新
 	import CustomRefresher from '../custom-refresher/custom-refresher.vue'
+	
+	import {bookUtils} from '../../utils/bookUtils.js'
 	export default{
 		name:'BooksData',
 		components:{
 			BooksDataItem,
 			CustomRefresher
+		},
+		props:{
+			bookList:{
+				type:Array,
+				default(){
+					return[]
+				}
+			}
 		},
 		data(){
 			return{
@@ -43,7 +54,8 @@
 					'寒雨连江夜入吴',
 					'平明送客楚山孤',
 					'洛阳亲友如相问',
-					'一片冰心在玉壶'
+					'一片冰心在玉壶',
+					'广告位招租!'
 				],
 				dataList:[],
 				index:1,
@@ -59,13 +71,18 @@
 						item.delete = false
 					})
 				}
+			},
+			bookList(){
+				this.dataList = this.bookList
 			}
 		},
-	
+		
 		mounted() {
 			this.$bus.$on('isLongTap',(data)=>{
 				this.isShowDelete = data
 			})
+			
+			
 		},
 		computed:{
 			//全选切换
@@ -83,96 +100,25 @@
 			}
 		},
 		methods:{
-			queryList() {
-				let data = [
-					{
-						id:1,
-						name:'test1',
-						delete:false,
-					},
-					{
-						id:2,
-						name:'test2',
-						delete:false,
-					},
-					{
-						id:3,
-						name:'test3',
-						delete:false,
-					},
-					{
-						id:4,
-						name:'test4',
-						delete:false,
-					},
-					{
-						id:5,
-						name:'test5',
-						delete:false,
-					},
-					{
-						id:1,
-						name:'test1',
-						delete:false,
-					},
-					{
-						id:2,
-						name:'test2',
-						delete:false,
-					},
-					{
-						id:3,
-						name:'test3',
-						delete:false,
-					},
-					{
-						id:4,
-						name:'test4',
-						delete:false,
-					},
-					{
-						id:5,
-						name:'test5',
-						delete:false,
-					},
-					{
-						id:1,
-						name:'test1',
-						delete:false,
-					},
-					{
-						id:2,
-						name:'test2',
-						delete:false,
-					},
-					{
-						id:3,
-						name:'test3',
-						delete:false,
-					},
-					{
-						id:4,
-						name:'test4',
-						delete:false,
-					},
-					{
-						id:5,
-						name:'test5',
-						delete:false,
-					}
-				]
-				if(this.index <= 0){
-					data = []
-				}
+			
+		  	queryList() {
+				
+				let data = []
 				uni.showLoading({
 					title: '加载中...'
 				})
-				// setTimeout(()=>{
+				setTimeout(()=>{
+					let bookCaseData = uni.getStorageSync('BOOK_CASE_DATA')
 					
+					if (typeof bookCaseData !== 'object') {
+						bookCaseData = []
+					}
+					this.dataList = bookCaseData
 					uni.hideLoading();
-					 this.$refs.paging.complete(data);
-					 this.index = this.index-1
-				// },3*1000)
+					this.$refs.paging.complete(bookCaseData);
+				},1500)
+				
+					
 
 			},
 			
@@ -198,6 +144,11 @@
 			deleteBooks(){
 				this.dataList =	this.dataList.filter(item=>item.delete==false)
 				this.isShowDelete = false
+				uni.setStorageSync('BOOK_CASE_DATA',this.dataList)
+				uni.showToast({
+				    title: '删除成功',
+				    duration: 2000
+				});
 			},
 			//删除确认弹窗
 			confirm(){
@@ -206,7 +157,22 @@
 					this.deleteBooks()
 				}
 				
-			}
+			},
+			demo:bookUtils.debounce(value=>{
+				
+				
+				// this.dataList 
+				
+			},300),
+			//搜索框内容发生改变 使用防抖函数
+			searchChange(value){
+				let bookCaseData = uni.getStorageSync('BOOK_CASE_DATA')
+				if (typeof bookCaseData !== 'object') {
+					bookCaseData = []
+				}
+				let data = bookCaseData.filter(item=> item.Name.search(value) != -1)
+				this.dataList = data
+			},
 		
 		}
 	}

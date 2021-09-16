@@ -1,9 +1,9 @@
 <template>
 	<view class="set">
 		<view class="set-item">
-			<view class="set-msg">
+			<view class="set-msg" @click="readLog">
 				<image src="../../static/img/proflie/read.png" mode=""></image>
-				<u-section class="m-section" title="阅读记录" color="#B1B3B3" :font-size="30" :bold="false" :show-line="false" @click="more" sub-title=""></u-section>
+				<u-section class="m-section" title="阅读记录" color="#B1B3B3" :font-size="30" :bold="false" :show-line="false" sub-title=""></u-section>
 			</view>
 			<u-gap height="8" bg-color="#EFEFF0"></u-gap>
 		</view>
@@ -27,8 +27,15 @@
 
 <script>
 	export default{
+		
 		name:"ProflieSet",
 		methods:{
+			//显示历史记录
+			readLog(){
+				uni.navigateTo({
+					url:'/pages/proflie/readHistory'
+				})
+			},
 			more(){
 				
 			}

@@ -3,7 +3,7 @@
 		<!-- 主编力荐 -->
 		<u-section class="m-section" title="主编力荐" :show-line="false" @click="more"></u-section>
 			
-		<EdAndPopItem v-for="(item,index) in [1,2,3,4,5]" :key="index"/>
+		<EdAndPopItem v-for="(item,index) in editorialData" :item="item" :key="item.Id"/>
 	</view>
 </template>
 
@@ -14,6 +14,14 @@
 		name:'Editorial',
 		components:{
 			EdAndPopItem
+		},
+		props:{
+			editorialData:{
+				type:Array,
+				default(){
+					return[]
+				}
+			}
 		},
 		methods:{
 			//点击更多

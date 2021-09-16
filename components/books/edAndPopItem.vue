@@ -1,17 +1,20 @@
 <template>
-	<view class="book" @click="goBookDetail">
+	<view class="book" @click="goBookDetail(item)">
 		<view class="book-msg">
-			<image class="book-img" src="../../static/img/boots_nav/new_book.png" mode="" />
+			<!-- <image class="book-img" src="../../static/img/boots_nav/new_book.png" mode="" /> -->
+			<!-- <image class="book-img" v-lazy="item.Img" mode="" /> -->
+			<!-- 图片懒加载 -->
+			<u-lazy-load class="book-img" :image="item.Img" :loading-img="loadingImg" :error-img="errorImg"></u-lazy-load>
 			<view class="book-text">
-				<text class="book-name">活着</text>
+				<text class="book-name">{{item.Name}}</text>
 				<view class="book-author">
 					<image src="../../static/img/tabbar/profile_acitve.png" mode=""/>
-					<text>余华</text>
-					<text class="type">小说</text>
-					<text class="state">连载</text>
-					<text class="num">120万字</text>
+					<text>{{item.Author}}</text>
+					<text class="type">{{item.CName}}</text>
+					<text class="state">{{item.BookStatus}}</text>
+					<!-- <text class="num">120万字</text> -->
 				</view>
-				<text class="book-content">富贵，富贵，富贵，富贵，富贵，富贵，富贵，富贵，富贵，富贵，富贵，富贵，富贵，富贵，富贵，富贵，富贵，富贵，富贵，富贵，富贵，富贵，富贵，富贵，</text>
+				<text class="book-content">{{item.Desc}}</text>
 			</view>
 		</view>
 
@@ -20,14 +23,30 @@
 </template>
 
 <script>
+	import errorImg from '../../static/img/lazy/placeholderError.png'
+	import loadingImg from '../../static/img/lazy/placeholder.png'
 	export default {
 		name: 'EdAndPopItem',
+		props:{
+			item:{
+				type:Object,
+				default(){
+					return{}
+				}
+			}
+		},
+		data(){
+			return{
+				errorImg:errorImg,
+				loadingImg:loadingImg
+			}
+		},
 		methods:{
 			//去书籍详情页
-			goBookDetail(){
-				
+			goBookDetail(data){
+				data = JSON.stringify(data)
 				uni.navigateTo({
-					url:'/pages/detail/detail'
+					url:`/pages/detail/detail?data=${encodeURIComponent(data)}`
 				})
 			}
 		}

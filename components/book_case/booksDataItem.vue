@@ -1,15 +1,17 @@
 <template>
 	<view class="data-list">
-		<view class="data" v-for="(item,index) in dataList" 
+		<view class="data"  v-for="(item,index) in dataList" 
 			@longtap="longtap">
 			<view @click="selectDelete(index)" class="is-delete" :class="{'select-delete':item.delete}" v-show="isDelete">
 				<image src="../../static/img/select/select.png"  v-if="!item.delete" />
 				<image src="../../static/img/select/select_active.png" v-else/>
 			</view>
-			<view class="item">
-				{{item.name}}
+			
+			<view class="item" @click="goDetail(index)">
+				
+				<image  class="book-img" :src="item.Img" ></image>
 			</view>
-			<text>{{item.id}}</text>
+			<view class="book-name">{{item.Name}}</view>
 			
 		</view>
 		<view class="data" v-show="!newIsDelete" @click="addBooks">
@@ -22,6 +24,8 @@
 </template>
 
 <script>
+	import errorImg from '../../static/img/lazy/placeholderError.png'
+	import loadingImg from '../../static/img/lazy/placeholder.png'
 	export default{
 		name:'BooksDataItem',
 		props:{
@@ -38,7 +42,9 @@
 		},
 		data(){
 			return{
-				newIsDelete:false
+				newIsDelete:false,
+				errorImg:errorImg,
+				loadingImg:loadingImg,
 			}
 		},
 		watch:{
@@ -58,8 +64,16 @@
 			},
 			//添加书籍
 			addBooks(){
-				console.log("ss")
+				this.$bus.$emit('goBooks')
+				
 			},
+			//跳转详情页
+			goDetail(index){
+				let data = JSON.stringify(this.dataList[index])
+				uni.navigateTo({
+					url:`/pages/read/read?data=${data}`
+				})
+			}
 			
 		}
 	}
@@ -75,12 +89,25 @@
 		margin: 0 20rpx;
 		.data {
 			position: relative;
+			
 			.item ,.add-books{
 				border-radius: 8rpx;
 				width: 188rpx;
 				height: 260rpx;
-				background-color: red;
 				margin: 12rpx 24rpx;
+					
+				
+			}
+			.book-name{
+				width: 236rpx;
+				overflow: hidden;
+				text-overflow: ellipsis;
+				 white-space: nowrap;
+			}
+			.book-img{
+				width: 188rpx;
+				height: 260rpx;
+				border-radius: 8rpx;
 			}
 			.add-books{
 				
@@ -96,6 +123,7 @@
 			}
 		}
 		.is-delete{
+			z-index: 99;
 			position: absolute;
 			border-radius: 8rpx;
 			width: 188rpx;
@@ -111,6 +139,7 @@
 			}
 		}
 		.select-delete{
+			z-index: 100;
 			background-color: rgba($color: #5EDAFE, $alpha: .7);
 		}
 			

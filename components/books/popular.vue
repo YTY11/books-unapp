@@ -2,16 +2,15 @@
 	<view class="popular">
 		<u-section class="m-section" title="今日热门" :show-line="false" @click="more"></u-section>
 		<view class="popular-data">
-			<!-- <EdAndPopItem v-for="(item,index) in [1,2,3,4,5,6]" :key="index"/> -->
 			<view>
 				<u-tabs-swiper height="0" ref="uTabs" :list="[1,2,3,4,5,6]" :current="current" @change="tabsChange"
 					:is-scroll="false" swiperWidth="750"></u-tabs-swiper>
 			</view>
 			<swiper class="swiper-item" :current="swiperCurrent" @transition="transition"
 				@animationfinish="animationfinish">
-				<swiper-item v-for="(item, index) in [1,2,3]" :key="index">
+				<swiper-item v-for="(popular, index) in popularData" :key="index">
 					<scroll-view scroll-y style="height: 420rpx;width: 100%;" @scrolltolower="onreachBottom">
-						<EdAndPopItem v-for="(item,index) in [1,2]" :key="index" />
+						<EdAndPopItem v-for="(item,index) in popular" :item="item" :key="item.Id" />
 					</scroll-view>
 				</swiper-item>
 			</swiper>
@@ -26,6 +25,15 @@
 		name: 'Popular',
 		components: {
 			EdAndPopItem
+		},
+			
+		props:{
+			popularData:{
+				type:Array,
+				default(){
+					return[]
+				}
+			}
 		},
 		data() {
 			return {

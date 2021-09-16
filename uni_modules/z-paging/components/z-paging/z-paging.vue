@@ -4,8 +4,8 @@
   / /_____| |_) | (_| | (_| | | | | | (_| |
  /___|    | .__/ \__,_|\__, |_|_| |_|\__, |
           |_|          |___/         |___/ 
-V2.0.5
-by ZXLee 2021-08-29
+V2.0.6
+by ZXLee 2021-09-08
 -- >
 <!-- API文档地址：http://z-paging.com -->
 <!-- github地址:https://github.com/SmileZXLee/uni-z-paging -->
@@ -23,9 +23,9 @@ by ZXLee 2021-08-29
 		</view>
 		<view :class="{'zp-scroll-view-super':!usePageScroll}" :style="[finalScrollViewStyle]">
 			<scroll-view
-				:class="{'zp-scroll-view':true,'zp-scroll-view-absolute':!usePageScroll}"
-				:scroll-top="scrollTop"
-				:scroll-y="scrollable&&!usePageScroll&&scrollEnable" :enable-back-to-top="finalEnableBackToTop"
+				:class="{'zp-scroll-view':true,'zp-scroll-view-absolute':!usePageScroll,'zp-scroll-view-hide-scrollbar':!showScrollbar}"
+				:scroll-top="scrollTop" :scroll-x="scrollX"
+				:scroll-y="scrollable&&!usePageScroll&&scrollEnable&&refresherStatus!==3" :enable-back-to-top="finalEnableBackToTop"
 				:show-scrollbar="showScrollbar" :scroll-with-animation="finalScrollWithAnimation"
 				:scroll-into-view="scrollIntoView" :lower-threshold="finalLowerThreshold" :upper-threshold="5"
 				:refresher-enabled="finalRefresherEnabled&&!useCustomRefresher" :refresher-threshold="finalRefresherThreshold"
@@ -47,7 +47,7 @@ by ZXLee 2021-08-29
 					<!-- #ifdef APP-VUE || MP-WEIXIN || MP-QQ || H5 -->
 					:change:prop="pagingWxs.propObserver" :prop="wxsPropType"
 					:data-refresherThreshold="finalRefresherThreshold" :data-isIos="isIos" :data-isIos13="isIos13"
-					:data-loading="loading" :data-useChatRecordMode="useChatRecordMode" 
+					:data-loading="loading||isRefresherInComplete" :data-useChatRecordMode="useChatRecordMode" 
 					:data-refresherEnabled="refresherEnabled" :data-useCustomRefresher="useCustomRefresher" :data-pageScrollTop="wxsPageScrollTop"
 					:data-scrollTop="wxsScrollTop" :data-refresherMaxAngle="refresherMaxAngle" 
 					:data-refresherAecc="refresherAngleEnableChangeContinued" :data-usePageScroll="usePageScroll"
@@ -72,7 +72,7 @@ by ZXLee 2021-08-29
 								</view>
 								<z-paging-refresh ref="refresh" v-if="!showCustomRefresher" :style="[{'height': `${finalRefresherThreshold}px`}]" :status="refresherStatus"
 									:defaultThemeStyle="finalRefresherThemeStyle" :defaultText="finalRefresherDefaultText"
-									:pullingText="finalRefresherPullingText" :refreshingText="finalRefresherRefreshingText" 
+									:pullingText="finalRefresherPullingText" :refreshingText="finalRefresherRefreshingText" :completeText="finalRefresherCompleteText"
 									:showUpdateTime="showRefresherUpdateTime" :updateTimeKey="refresherUpdateTimeKey"
 									:imgStyle="refresherImgStyle" :titleStyle="refresherTitleStyle" :updateTimeStyle="refresherUpdateTimeStyle"></z-paging-refresh>
 							</view>
@@ -87,13 +87,14 @@ by ZXLee 2021-08-29
 								<image v-else :src="base64Flower" class="zp-chat-record-loading-custom-image">
 								</image>
 							</view>
+							<!-- 全屏Loading -->
 							<slot v-if="$slots.loading&&showLoading" name="loading" />
 							<!-- 主体内容 -->
 							<view class="zp-paging-container-content" :style="[finalPagingContentStyle]">
 								<slot />
 							</view>
 							<!-- 空数据图 -->
-							<view class="zp-empty-view" v-if="showEmpty">
+							<view :class="{'zp-empty-view':true,'zp-empty-view-center':emptyViewCenter}" v-if="showEmpty">
 								<slot v-if="$slots.empty" name="empty" />
 								<z-paging-empty-view v-else :emptyViewImg="finalEmptyViewImg" :emptyViewText="finalEmptyViewText" :showEmptyViewReload="finalShowEmptyViewReload" 
 								:emptyViewReloadText="finalEmptyViewReloadText" :isLoadFailed="isLoadFailed" :emptyViewStyle="emptyViewStyle" :emptyViewTitleStyle="emptyViewTitleStyle" 
@@ -128,10 +129,12 @@ by ZXLee 2021-08-29
 				</view>
 			</scroll-view>
 		</view>
+		<!-- 底部固定的slot -->
 		<slot v-if="!usePageScroll&&$slots.bottom" name="bottom"></slot>
 		<view class="zp-page-scroll-bottom" v-else-if="usePageScroll&&$slots.bottom" :style="[{'bottom': `${windowBottom}px`}]">
 			<slot name="bottom"></slot>
 		</view>
+		<!-- 点击返回顶部view -->
 		<view v-if="showBackToTopClass" :class="backToTopClass" :style="[finalBackToTopStyle]" @click.stop="_backToTopClick">
 			<slot v-if="$slots.backToTop" name="backToTop" />
 			<image v-else class="zp-back-to-top-img" :src="backToTopImg.length?backToTopImg:base64BackToTop"></image>
@@ -139,22 +142,23 @@ by ZXLee 2021-08-29
 	</view>
 	<!-- #endif -->
 	<!-- #ifdef APP-NVUE -->
-	<view :is="finalNvueSuperListIs" :class="{'z-paging-content-fixed':fixed&&!usePageScroll}">
+	<view :is="finalNvueSuperListIs" :style="[finalPagingStyle]" :class="{'z-paging-content-fixed':fixed&&!usePageScroll}">
+		<!-- 顶部固定的slot -->
 		<view ref="zp-page-scroll-top" :is="nViewIs" class="zp-page-scroll-top" v-if="$slots.top" :style="[{'top':`${windowTop}px`,'z-index':topZIndex}]">
 			<slot name="top"></slot>
 		</view>
 		<view ref="n-list" :id="nvueListId" :style="[{'flex': 1},scrollViewStyle,useChatRecordMode ? {transform: nIsFirstPageAndNoMore?'rotate(0deg)':'rotate(180deg)'}:{}]" :is="finalNvueListIs" alwaysScrollableVertical="true"
 			:fixFreezing="nFixFreezing" :show-scrollbar="showScrollbar" :loadmoreoffset="finalLowerThreshold"
-			:scrollable="scrollable&&scrollEnable" :bounce="nvueBounce" :column-count="nWaterfallColumnCount" :column-width="nWaterfallColumnWidth"
+			:scrollable="scrollable&&scrollEnable&&refresherStatus!==3" :bounce="nvueBounce" :column-count="nWaterfallColumnCount" :column-width="nWaterfallColumnWidth"
 			:column-gap="nWaterfallColumnGap" :left-gap="nWaterfallLeftGap" :right-gap="nWaterfallRightGap"
 			@loadmore="_nOnLoadmore" @scroll="_nOnScroll">
-			<refresh class="zp-n-refresh" v-if="finalNvueListIs!=='view'&&finalRefresherEnabled&&!nShowRefresherReveal&&!useChatRecordMode" :display="nRefresherLoading?'show':'hide'" @refresh="_nOnRrefresh"
+			<refresh class="zp-n-refresh" :style="[nvueRefresherStyle]" v-if="finalNvueListIs!=='view'&&finalRefresherEnabled&&!nShowRefresherReveal&&!useChatRecordMode" :display="nRefresherLoading?'show':'hide'" @refresh="_nOnRrefresh"
 				@pullingdown="_nOnPullingdown">
 				<view ref="zp-n-refresh-container" class="zp-n-refresh-container">
 					<!-- 下拉刷新view -->
 					<slot v-if="zScopedSlots.refresher" :refresherStatus="refresherStatus" name="refresher" />
 					<z-paging-refresh ref="refresh" v-else :status="refresherStatus" :defaultThemeStyle="finalRefresherThemeStyle"
-						:defaultText="finalRefresherDefaultText" :pullingText="finalRefresherPullingText" :refreshingText="finalRefresherRefreshingText" 
+						:defaultText="finalRefresherDefaultText" :pullingText="finalRefresherPullingText" :refreshingText="finalRefresherRefreshingText" :completeText="finalRefresherCompleteText"
 						:showUpdateTime="showRefresherUpdateTime" :updateTimeKey="refresherUpdateTimeKey"
 						:imgStyle="refresherImgStyle" :titleStyle="refresherTitleStyle" :updateTimeStyle="refresherUpdateTimeStyle"></z-paging-refresh>
 				</view>
@@ -163,14 +167,14 @@ by ZXLee 2021-08-29
 			<view v-if="nShowRefresherReveal" ref="zp-n-list-refresher-reveal" :style="[{transform:`translateY(-${nShowRefresherRevealHeight}px)`,height:'0px'}]" :is="nViewIs">
 				<slot v-if="zScopedSlots.refresher" :refresherStatus="refresherStatus" name="refresher" />
 				<z-paging-refresh ref="refresh" v-else :status="refresherStatus" :defaultThemeStyle="finalRefresherThemeStyle"
-					:defaultText="finalRefresherDefaultText" :pullingText="finalRefresherPullingText" :refreshingText="finalRefresherRefreshingText" 
+					:defaultText="finalRefresherDefaultText" :pullingText="finalRefresherPullingText" :refreshingText="finalRefresherRefreshingText" :completeText="finalRefresherCompleteText" 
 					:showUpdateTime="showRefresherUpdateTime" :updateTimeKey="refresherUpdateTimeKey"
 					:imgStyle="refresherImgStyle" :titleStyle="refresherTitleStyle" :updateTimeStyle="refresherUpdateTimeStyle"></z-paging-refresh>
 			</view>
 			<slot />
 			<!-- 空数据图 -->
 			<view class="z-paging-empty-view" :class="{'z-paging-content-fixed':usePageScroll}" style="flex: 1;" :style="[scrollViewStyle,useChatRecordMode ? {transform: nIsFirstPageAndNoMore?'rotate(0deg)':'rotate(180deg)'}:{}]" v-if="showEmpty" :is="nViewIs">
-				<view class="zp-empty-view">
+				<view :class="{'zp-empty-view':true,'zp-empty-view-center':emptyViewCenter}">
 					<slot v-if="$slots.empty" name="empty" />
 					<z-paging-empty-view v-else :emptyViewImg="finalEmptyViewImg" :emptyViewText="finalEmptyViewText" :showEmptyViewReload="finalShowEmptyViewReload" 
 					:emptyViewReloadText="finalEmptyViewReloadText" :isLoadFailed="isLoadFailed" :emptyViewStyle="emptyViewStyle" :emptyViewTitleStyle="emptyViewTitleStyle" 
@@ -212,7 +216,9 @@ by ZXLee 2021-08-29
 				</view>
 			</view>
 		</view>
+		<!-- 底部固定的slot -->
 		<slot name="bottom"></slot>
+		<!-- 点击返回顶部view -->
 		<view v-if="showBackToTopClass" :class="backToTopClass" :style="[finalBackToTopStyle]" @click.stop="_backToTopClick">
 			<slot v-if="$slots.backToTop" name="backToTop" />
 			<image v-else class="zp-back-to-top-img" :src="backToTopImg.length?backToTopImg:base64BackToTop"></image>
@@ -241,7 +247,10 @@ by ZXLee 2021-08-29
 	 * @property {Number|String} delay 调用complete后延迟处理的时间，单位为毫秒
 	 * @property {String} language i18n国际化设置语言，支持简体中文(zh-cn)、繁体中文(zh-hant-cn)和英文(en)
 	 * @property {Boolean} follow-system-language i18n国际化默认是否跟随系统语言，默认为是
-	 * @property {Object} paging-style 设置z-paging的style，部分平台可能无法直接修改组件的style，可使用此属性代替
+	 * @property {Object} paging-style 设置z-paging的style，部分平台(如微信小程序)无法直接修改组件的style，可使用此属性代替
+	 * @property {String} height z-paging的高度，优先级低于pagingStyle中设置的height，传字符串，如100px、100rpx、100%
+	 * @property {String} width z-paging的宽度，优先级低于pagingStyle中设置的width，传字符串，如100px、100rpx、100%
+	 * @property {String} bg-color z-paging的背景色，优先级低于pagingStyle中设置的background-color。传字符串，如"#ffffff"
 	 * @property {Object} paging-content-style 设置z-paging的容器(插槽的父view)的style
 	 * @property {Boolean} auto-height z-paging是否自动高度，若自动高度则会自动铺满屏幕，默认为否
 	 * @property {Number|String} auto-height-addition z-paging是否自动高度时，附加的高度，注意添加单位px或rpx，默认为px，若需要减少高度，请传负数
@@ -252,6 +261,8 @@ by ZXLee 2021-08-29
 	 * @property {Object} refresher-update-time-style 自定义下拉刷新中右侧最后更新时间文字的样式(show-refresher-update-time为true时有效)
 	 * @property {String} loading-more-theme-style 底部加载更多的主题样式，支持black，white，默认black
 	 * @property {Boolean} refresher-only 是否只使用下拉刷新，设置为true后将关闭mounted自动请求数据、关闭滚动到底部加载更多，强制隐藏空数据图。默认为否
+	 * @property {Number|String} refresher-complete-delay 自定义下拉刷新结束以后延迟回弹的时间，单位为毫秒，默认为0
+	 * @property {Number|String} refresher-complete-duration 自定义下拉刷新结束回弹动画时间，单位为毫秒，默认为300毫秒(refresherEndBounceEnabled为false时，refresherCompleteDuration为设定值的1/3)，nvue无效
 	 * @property {Boolean} use-page-scroll 使用页面滚动，默认为否，当设置为是时则使用页面的滚动而非此组件内部的scroll-view的滚动，使用页面滚动时z-paging无需设置确定的高度且对于长列表展示性能更高，但配置会略微繁琐
 	 * @property {Boolean} fixed z-paging是否使用fixed布局，若使用fixed布局，则z-paging的父view无需固定高度，z-paging高度默认为100%，默认为否(当使用内置scroll-view滚动时有效)
 	 * @property {Boolean} safe-area-inset-bottom 是否开启底部安全区域适配，默认为否
@@ -263,13 +274,14 @@ by ZXLee 2021-08-29
 	 * @property {Boolean} show-loading-more-when-reload 调用reload方法时自动显示加载更多view，且为加载中状态(仅初始设置有效，不可动态修改)
 	 * @property {Boolean} refresher-update-time-key 如果需要区别不同页面的最后更新时间，请为不同页面的z-paging的`refresher-update-time-key`设置不同的字符串
 	 * @property {Boolean} use-custom-refresher 是否使用自定义的下拉刷新，默认为是，即使用z-paging的下拉刷新。设置为false即代表使用uni scroll-view自带的下拉刷新，h5、App、微信小程序以外的平台不支持uni scroll-view自带的下拉刷新
-	 * @property {Number|String} refresher-fps 自定义下拉刷新下拉帧率，默认为40，过高可能会出现抖动问题(use-custom-refresher为true时生效)
+	 * @property {Number|String} refresher-fps 自定义下拉刷新下拉帧率，默认为40，过高可能会出现抖动问题
 	 * @property {Number|String} refresher-max-angle 自定义下拉刷新允许触发的最大下拉角度，默认为40度，当下拉角度小于设定值时，自定义下拉刷新动画不会被触发
 	 * @property {Boolean} refresher-angle-enable-change-continued 自定义下拉刷新的角度由未达到最大角度变到达到最大角度时，是否继续下拉刷新手势，默认为否
-	 * @property {String|Object} refresher-default-text 自定义下拉刷新默认状态下的文字(use-custom-refresher为true时生效)
-	 * @property {String|Object} refresher-pulling-text 自定义下拉刷新松手立即刷新状态下的文字(use-custom-refresher为true时生效)
-	 * @property {String|Object} refresher-refreshing-text 自定义下拉刷新刷新中状态下的文字(use-custom-refresher为true时生效)
-	 * @property {Boolean} refresher-end-bounce-enabled 是否开启自定义下拉刷新刷新结束回弹效果，默认为是(use-custom-refresher为true时生效)
+	 * @property {String|Object} refresher-default-text 自定义下拉刷新默认状态下的文字
+	 * @property {String|Object} refresher-pulling-text 自定义下拉刷新松手立即刷新状态下的文字
+	 * @property {String|Object} refresher-refreshing-text 自定义下拉刷新刷新中状态下的文字
+	 * @property {String|Object} refresher-complete-text 自定义下拉刷新刷新结束状态下的文字
+	 * @property {Boolean} refresher-end-bounce-enabled 是否开启自定义下拉刷新刷新结束回弹效果，默认为是
 	 * @property {Object} loading-more-custom-style 自定义底部加载更多样式
 	 * @property {Object} loading-more-loading-icon-custom-style 自定义底部加载更多加载中动画样式
 	 * @property {String} loading-more-loading-icon-type 自定义底部加载更多加载中动画图标类型，可选circle或flower，默认为circle
@@ -299,7 +311,8 @@ by ZXLee 2021-08-29
 	 * @property {Object} empty-view-img-style 空数据图img样式
 	 * @property {Object} empty-view-title-style 空数据图描述文字样式
 	 * @property {Object} empty-view-reload-style 空数据图重新加载按钮样式
-	 * @property {Boolean} empty-view-fixed 空数据图片是否使用fixed布局并铺满z-paging，默认为是，若设置为false将紧贴z-paging插入的view下方
+	 * @property {Boolean} empty-view-fixed 空数据图片是否使用fixed布局并铺满z-paging，默认为是，即铺满屏幕。若设置为否，则其父view会填充满z-paging的剩余部分
+	 * @property {Boolean} empty-view-center 空数据图片是否垂直居中，默认为是。emptyViewFixed为false时有效
 	 * @property {Boolean} auto-hide-empty-view-when-loading 加载中时是否自动隐藏空数据图，默认为是
 	 * @property {Boolean} auto-hide-loading-after-first-loaded 第一次加载后是否自动隐藏loading slot，默认为是
 	 * @property {Boolean} auto-show-back-to-top 自动显示点击返回顶部按钮，默认为否
@@ -308,7 +321,8 @@ by ZXLee 2021-08-29
 	 * @property {Boolean} back-to-top-with-animate 点击返回顶部按钮返回到顶部时是否展示过渡动画，默认为是
 	 * @property {Number|String} back-to-top-bottom 点击返回顶部按钮与底部的距离，注意添加单位px或rpx，默认为160rpx
 	 * @property {Object} back-to-top-style 点击返回顶部按钮的自定义样式
-	 * @property {Boolean} show-scrollbar 在设置滚动条位置时是否使用动画过渡，默认为否
+	 * @property {Boolean} show-scrollbar 控制是否出现滚动条，默认为是
+	 * @property {Boolean} scroll-x 是否允许横向滚动，默认为否
 	 * @property {Boolean} scroll-to-top-bounce-enabled iOS设备上滚动到顶部时是否允许回弹效果，默认为否。关闭回弹效果后可使滚动到顶部与下拉刷新更连贯，但是有吸顶view时滚动到顶部时可能出现抖动。
 	 * @property {Boolean} scroll-with-animation 控制是否出现滚动条，默认为否
 	 * @property {String} scroll-into-view 值应为某子元素id（id不能以数字开头）。设置哪个方向可滚动，则在哪个方向滚动到该元素
@@ -333,6 +347,7 @@ by ZXLee 2021-08-29
 	 * @property {Boolean} nvue-bounce nvue 控制是否回弹效果，iOS不支持动态修改(若禁用回弹效果，下拉刷新将失效)，默认为是
 	 * @property {Boolean} nvue-fast-scroll nvue中通过代码滚动到顶部/底部时，是否加快动画效果(无滚动动画时无效)，默认为否
 	 * @property {String} nvue-list-id nvue中list的id
+	 * @property {Object} nvue-refresher-style nvue中refresh组件的样式
 	 * @property {Boolean} hide-nvue-bottom-tag 是否隐藏nvue列表底部的tagView，此view用于标识滚动到底部位置，若隐藏则滚动到底部功能将失效，在nvue中实现吸顶+swiper功能时需将最外层z-paging的此属性设置为true。默认为否
 	 * @property {Boolean} show-console-error 是否将错误信息打印至控制台，默认为是
 	 * @event {Function} query 组件加载时会自动触发此方法，因此默认页面加载时会自动触发，无需手动调用。pageNo和pageSize会自动计算好，直接传给服务器即可。
@@ -368,6 +383,9 @@ by ZXLee 2021-08-29
 			language: {type: String},
 			followSystemLanguage: {type: Boolean},
 			pagingStyle: {type: Object},
+			height: {type: String},
+			width: {type: String},
+			bgColor: {type: String},
 			pagingContentStyle: {type: Object},
 			autoHeight: {type: Boolean},
 			autoHeightAddition: {type: [Number, String]},
@@ -378,6 +396,8 @@ by ZXLee 2021-08-29
 			refresherUpdateTimeStyle: {type: Object},
 			loadingMoreThemeStyle: {type: String},
 			refresherOnly: {type: Boolean},
+			refresherCompleteDelay: {type: [Number, String]},
+			refresherCompleteDuration: {type: [Number, String]},
 			usePageScroll: {type: Boolean},
 			fixed: {type: Boolean},
 			safeAreaInsetBottom: {type: Boolean},
@@ -395,6 +415,7 @@ by ZXLee 2021-08-29
 			refresherDefaultText: {type: [String, Object]},
 			refresherPullingText: {type: [String, Object]},
 			refresherRefreshingText: {type: [String, Object]},
+			refresherCompleteText: {type: [String, Object]},
 			refresherEndBounceEnabled: {type: Boolean},
 			loadingMoreCustomStyle: {type: Object},
 			loadingMoreLoadingIconCustomStyle: {type: Object},
@@ -427,6 +448,7 @@ by ZXLee 2021-08-29
 			emptyViewTitleStyle: {type: Object},
 			emptyViewReloadStyle: {type: Object},
 			emptyViewFixed: {type: Boolean},
+			emptyViewCenter: {type: Boolean},
 			autoHideEmptyViewWhenLoading: {type: Boolean},
 			autoHideLoadingAfterFirstLoaded: {type: Boolean},
 			autoShowBackToTop: {type: Boolean},
@@ -436,6 +458,7 @@ by ZXLee 2021-08-29
 			backToTopBottom: {type: [Number, String]},
 			backToTopStyle: {type: Object},
 			showScrollbar: {type: Boolean},
+			scrollX: {type: Boolean},
 			scrollToTopBounceEnabled: {type: Boolean},
 			scrollToBottomBounceEnabled: {type: Boolean},
 			scrollWithAnimation: {type: Boolean},
@@ -464,6 +487,7 @@ by ZXLee 2021-08-29
 			nvueBounce: {type: Boolean},
 			nvueFastScroll: {type: Boolean},
 			nvueListId: {type: String},
+			nvueRefresherStyle: {type: Object},
 			hideNvueBottomTag: {type: Boolean},
 			showConsoleError: {type: Boolean},
 			value: {type: Array}

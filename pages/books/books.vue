@@ -1,7 +1,9 @@
 <template>
 	<z-paging :empty-view-fixed="false" auto-hide-loading-after-first-loaded loading-more-no-more-text="~~~~~~~~我是有底线的~~~~~~~~"
 		auto-show-back-to-top back-to-top-bottom="160rpx" back-to-top-img="../../static/img/top/top.png"
-		class="z-paging" ref="paging" v-model="dataList" @query="queryList" :hide-empty-view="true">
+		class="z-paging" ref="paging" v-model="dataList" @query="queryList" :hide-empty-view="true"
+		@refresherStatusChange="refresherStatusChange"
+		>
 		<!-- 自定义下拉刷新样式 -->
 		<custom-refresher slot="refresher" slot-scope="{refresherStatus}" :status="refresherStatus" />
 		<!-- 头部搜索 -->
@@ -9,20 +11,22 @@
 		
 		<!-- 轮播图 -->
 		<view class="wrap">
-			<u-swiper indicator-color="#5EDAFE" indicator-active-color="#5EDAFE" :list="swiperList" interval="3000" duration="1500" bg-color="#FFFFFF" :circular="true" :effect3d="true" border-radius="15"></u-swiper>
+			<u-swiper indicator-color="#5EDAFE" img-mode="scaleToFill" indicator-active-color="#5EDAFE" :list="swiperList" interval="3000" 
+			@click="clickSwiperImg" bg-color="#FFFFFF" :circular="true" :effect3d="true" 
+			border-radius="15"></u-swiper>
 		</view>
 		
 		<!-- 导航 -->
 		<Nav/>
 		
 		<!-- 滚动推荐 -->
-		<Notice/>
+		<Notice :noticeData="noticeData"/>
 		
 		<!-- 主编力荐 -->
-		<Editorial/>
+		<Editorial :editorialData="editorialData"/>
 		
 		<!-- 今日热门 -->
-		<Popular/>
+		<Popular :popularData="popularData"/>
 		
 		<!-- 为你推荐 -->
 		<ToYouBooks :dataList='dataList'/>
@@ -44,6 +48,9 @@
 	 import Popular from '../../components/books/popular.vue'
 	 // 为你推荐
 	 import ToYouBooks from '../../components/books/toYouBooks.vue'
+	 
+	 //网络数据
+	 import {seekBooks} from '../../api/seek.js'
 	export default {
 		components: {
 			Seek,
@@ -57,40 +64,124 @@
 		data() {
 			return {
 				dataList: [],
-				swiperList: [{
-						image: 'https://cdn.uviewui.com/uview/swiper/1.jpg',
-						title: '昨夜星辰昨夜风，画楼西畔桂堂东'
-					},
-					{
-						image: 'https://cdn.uviewui.com/uview/swiper/2.jpg',
-						title: '身无彩凤双飞翼，心有灵犀一点通'
-					},
-					{
-						image: 'https://cdn.uviewui.com/uview/swiper/3.jpg',
-						title: '谁念西风独自凉，萧萧黄叶闭疏窗，沉思往事立残阳'
-					}
-				],
-				
+				swiperList: [],
+				editorialData:[],
+				popularData:[],
+				noticeData:[],
+				page:1,
+				isLoading:false
 				
 			}
+		},
+		onLoad() {
+			this.page =  this.$bookUtils.getRandom(1,30)
+			this.editorialAndpopularDatas(`''`,this.page)
 		},
 		onHide() {
 			this.$store.commit('SET_SHOW',false)
 		},
 		methods: {
-			queryList() {
-				let data = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
+			async queryList() {
+				let data = []
 				uni.showLoading({
 					title: '加载中...'
 				})
-				setTimeout(()=>{
-					uni.hideLoading();
-					this.$refs.paging.complete(data);
-				},3000)
+			
+			await	this.forYouDatas(`''`,this.page++)				
+				uni.hideLoading()
+			},
+			// 下拉刷新
+		async	refresherStatusChange(index){
+				if(index == 2){//刷新中
+				uni.showLoading({
+					title: '加载中...'
+				})
+				await	this.editorialAndpopularDatas(`''`,this.$bookUtils.getRandom(1,30))
+				uni.hideLoading()
+				}
 				
 			},
 			
+			//轮播图 主编推荐 今日热门
+		async	editorialAndpopularDatas(name,page){
+			await	seekBooks(name,page).then(res=>{					
+					if(res.info === "success"){
+						this.editorialData = res.data.slice(0,5)//推荐数据
+						this.popularData = [res.data.slice(5,7),res.data.slice(7,9),res.data.slice(9,11)]//热门数据
+						this.swiperList = []
+						
+						res.data.slice(11,14).forEach(item=>{
+							this.swiperList.push({image:item.Img,title:item.Name,item})
+						})
+						this.noticeData = res.data.slice(14,20)
+						
+						
+					}
+				}).catch(err=>{
+					console.log(err);
+					uni.hideLoading();
+					uni.showModal({
+						title: '连接失败',
+						content: '请检查您的网络状态',
+						confirmText: '重试',
+						success: async (res) => {
+							if (res.confirm) {
+								//用户点击了重试
+								uni.showLoading({
+									title: '加载中...'
+								})
+								await this.editorialAndpopularDatas(name,page)
+								uni.hideLoading()
+								resolve()
+							} else if (res.cancel) {
+								//用户点击取消
+								this.back()
+							}
+						}
+					})
+				})
+			},
+			//为你推荐
+		async	forYouDatas(name,page){
+			await	seekBooks(name,page).then(res=>{					
+					if(res.info === "success"){
+						this.$refs.paging.complete(res.data);
+					}
+				}).catch(err=>{
+					console.log(err);
+					uni.hideLoading();
+					uni.showModal({
+						title: '连接失败',
+						content: '请检查您的网络状态',
+						confirmText: '重试',
+						success: async (res) => {
+							if (res.confirm) {
+								//用户点击了重试
+								uni.showLoading({
+									title: '加载中...'
+								})
+								await this.forYouDatas(name,page)
+								uni.hideLoading()
+								resolve()
+							} else if (res.cancel) {
+								//用户点击取消
+								this.back()
+							}
+						}
+					})
+				})
+			},
 			
+			// 点击轮播图片
+			clickSwiperImg(index){
+				//去书籍详情页
+				let data = JSON.stringify(this.swiperList[index].item)
+				uni.navigateTo({
+					url: `/pages/detail/detail?data=${encodeURIComponent(data)}`
+				})
+			}
+		
+		
 		}
 	}
 </script>
