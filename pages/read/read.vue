@@ -62,7 +62,7 @@
 		<!--     根据需要更改（封面）     -->
 		<!-- ************************** -->
 		<!-- 封面 -->
-		<view class="cover container" :class="{container0: background === 1, container1: background === 2}" :style="{zIndex: 201, transform: `translate${cover.pageTranslate[turnType]}`, transition: `transform ${showAnimation?turnPageTime:0}s`,
+		<view class="cover container" :class="{container0: background === 1, container1: background === 2,container2: background === 3}" :style="{zIndex: 201, transform: `translate${cover.pageTranslate[turnType]}`, transition: `transform ${showAnimation?turnPageTime:0}s`,
 			boxShadow:showShadow&&turnType===0?'0 0 10px 0 rgba(0,0,0,.4)':''}" @touchstart="coverTouchStart"
 			@touchend="coverTouchEnd" @touchmove="coverTouchMove" @touchcancel="coverTouchcancel">
 
@@ -80,7 +80,7 @@
 
 		<!-- 阅读页（结构和样式请和仅用于计算元素一致） -->
 		<!-- 上一页 -->
-		<view class="container" :class="{container0: background === 1, container1: background === 2}" :style="{zIndex: 102, transform: `translate${prePage.pageTranslate[turnType]}`, transition: `transform ${showAnimation?turnPageTime:0}s`,
+		<view class="container" :class="{container0: background === 1, container1: background === 2,container2: background === 3}" :style="{zIndex: 102, transform: `translate${prePage.pageTranslate[turnType]}`, transition: `transform ${showAnimation?turnPageTime:0}s`,
 			boxShadow:showShadow&&turnType===0?'0 0 10px 0 rgba(0,0,0,.4)':''}">
 			<!-- 章节名 -->
 			<view class="chapter">
@@ -121,7 +121,7 @@
 		</view>
 
 		<!-- 本页 -->
-		<view class="container" :class="{container0: background === 1, container1: background === 2}" :style="{zIndex: 101, transform: `translate${curPage.pageTranslate[turnType]}`, transition: `transform ${showAnimation?turnPageTime:0}s`,
+		<view class="container" :class="{container0: background === 1, container1: background === 2,container2: background === 3}" :style="{zIndex: 101, transform: `translate${curPage.pageTranslate[turnType]}`, transition: `transform ${showAnimation?turnPageTime:0}s`,
 			boxShadow:showShadow&&turnType===0?'0 0 10px 0 rgba(0,0,0,.4)':''}" @touchstart="touchStart" @touchend="touchEnd"
 			@touchmove="touchMove" @touchcancel="touchcancel">
 			<!-- 章节名 -->
@@ -160,7 +160,7 @@
 		</view>
 
 		<!-- 下一页 -->
-		<view class="container" :class="{container0: background === 1, container1: background === 2}" :style="{zIndex: 100, transform: `translate${nextPage.pageTranslate[turnType]}`,transition: `transform ${showAnimation?turnPageTime:0}s`,
+		<view class="container" :class="{container0: background === 1, container1: background === 2,container2: background === 3}" :style="{zIndex: 100, transform: `translate${nextPage.pageTranslate[turnType]}`,transition: `transform ${showAnimation?turnPageTime:0}s`,
 			boxShadow:showShadow&&turnType===0?'0 0 10px 0 rgba(0,0,0,.4)':''}">
 			<!-- 章节名 -->
 			<view class="chapter">
@@ -281,12 +281,14 @@
 						:class="{active: background === 1}" @click="changeBackground(1)"></view>
 					<view class="icon" style="background-color: #000;" :class="{active: background === 2}"
 						@click="changeBackground(2)"></view>
+						<view class="icon" style="background-color: #20E3FA;" :class="{active: background === 3}"
+							@click="changeBackground(3)"></view>
 						
 				</view>
 			</view>
 
 			<!-- 目录层 -->
-			<view class="directory" :class="{container0: background === 1, container1: background === 2}"
+			<view class="directory" :class="{container0: background === 1, container1: background === 2,container2: background === 3}"
 				v-if="directoryShowBefore"
 				:style="{left: directoryShow ? 0 : '-100%',color: `${colorList[background - 1]}`,boxShadow:'0 0 10px 0 rgba(0,0,0,.4)'}"
 				@touchend.stop>
@@ -305,7 +307,6 @@
 			</view>
 		</view>
 		<u-modal style="z-index: 999;" v-model="show" show-cancel-button @cancel="cancel" @confirm="confirm" :content="content"></u-modal>
-
 	</view>
 </template>
 
@@ -329,10 +330,12 @@
 	export default {
 		components: {
 			battery,
-			virtualList
+			virtualList,
 		},
 		data() {
 			return {
+				count:1,
+				showMask:false,
 				content:'是否加入书架?',
 				errorImg: errorImg,
 				loadingImg: errorImg,
@@ -458,7 +461,7 @@
 				simplified: '', //是否简体
 				lineHeight: '', //行高，注意是fontSize的倍数
 				background: '', //背景
-				colorList: ['#000', '#666'], //与背景对应的字体颜色
+				colorList: ['#000', '#666','#2BA6B5'], //与背景对应的字体颜色
 
 				chapterProgress: 0, //‘章节进度条’的参数
 				progressTouched: false, //是否正在点击‘章节进度条’
@@ -469,6 +472,37 @@
 				directoryChapter:0
 			}
 
+		},
+		onBackPress(e){
+			
+			let bookCaseData = uni.getStorageSync('BOOK_CASE_DATA')
+			
+			if (typeof bookCaseData !== 'object') {
+				bookCaseData = []
+			}
+			let num	= bookCaseData.find(item => item.Id == this.bookId)
+			//监听设备物理键返回，给出提示是否添加书架
+			if(e.from == "backbutton"){
+				
+				if(num == undefined){
+					
+					if(this.count >= 2){
+						console.log("***");
+						return false
+					}
+					else{
+						this.show = true
+						this.count++
+						return true
+					}
+					
+				}
+				else{
+					return false
+				}
+				
+			}
+			
 		},
 		onLoad(option) {
 			this.bookData = JSON.parse(decodeURIComponent(option.data))
@@ -518,7 +552,7 @@
 			//取消加入书架
 			cancel(){
 				this.show = false
-				 uni.navigateBack()
+				uni.navigateBack()
 			},
 			//确认加入书架
 			confirm(){
@@ -2223,6 +2257,9 @@
 
 		.container1 {
 			background-color: #000;
+		}
+		.container2 {
+			background-color: #20E3FA;
 		}
 
 		.menu {

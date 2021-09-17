@@ -84,6 +84,44 @@
                "navigationBarBackgroundColor": "#FFFFFF"
             }
             
+        },
+		{
+			//开发帮助
+		    "path" : "pages/proflie/devHelp",
+		    "style" :                                                                                    
+		    {
+				"navigationBarTitleText": "开发帮助",
+				"enablePullDownRefresh": false,
+		       "navigationStyle": "custom",
+		       "navigationBarTextStyle": "black",
+		       "navigationBarBackgroundColor": "#FFFFFF"
+		    }
+		    
+		}
+        ,{
+			//娱乐中心
+            "path" : "pages/proflie/playGame",
+            "style" :                                                                                    
+            {
+				"navigationBarTitleText": "娱乐中心",
+               "navigationStyle": "custom",
+               "navigationBarTextStyle": "black",
+               "navigationBarBackgroundColor": "#FFFFFF"
+            }
+            
+        }
+        ,{
+			//游戏页面
+            "path" : "pages/game/game",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "游戏",
+                "enablePullDownRefresh": false,
+                "navigationStyle": "default",
+                "navigationBarTextStyle": "black",
+                "navigationBarBackgroundColor": "#FFFFFF"
+            }
+            
         }
     ],
 	"globalStyle": {
