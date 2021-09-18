@@ -17,7 +17,7 @@
 		</view>
 		
 		<!-- 导航 -->
-		<Nav/>
+		<!-- <Nav/> -->
 		
 		<!-- 滚动推荐 -->
 		<Notice :noticeData="noticeData"/>

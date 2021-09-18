@@ -538,7 +538,6 @@
 		},
 		mounted() {
 			this.initPage()
-			
 		},
 		computed: {
 			progress() { //章节的阅读进度

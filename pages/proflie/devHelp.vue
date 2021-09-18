@@ -42,10 +42,12 @@
 			</view>
 			
 			
-			
+			<!-- https://gitee.com/yty1998/books-unapp -->
 			<view class="left">
-				<text>项目源码:</text>
-			<u-link class="" href="https://github.com/YTY11/books-unapp.git">gitHub: books-unapp</u-link>
+				<text>项目源码:</text><br/>
+			<u-link class="" href="https://github.com/YTY11/books-unapp">1. github: books-unapp</u-link><br/>
+			<u-link class="" href="https://gitee.com/yty1998/books-unapp">2. gitee: books-unapp</u-link>
+			
 			<u-gap height="2" bg-color="#EFEFF0"></u-gap>
 			</view>
 			
@@ -53,6 +55,11 @@
 				<u-form-item >如有侵权请联系开发者:</u-form-item>
 				<u-form-item label-align="right" @click.native="copy('13523171602')" label="微信:" >13523171602</u-form-item>
 				<u-form-item label-align="right" @click.native="copy('862454711')" label="QQ:">862454711</u-form-item>
+			</view>
+			
+			<view class="session">
+				<image src="../../static/icon.png" mode=""></image>
+				<view>版本号：0.0.1 测试版</view>
 			</view>
 			
 			
@@ -101,6 +108,15 @@
 				font-weight: bold;
 				text-align: center;
 				
+			}
+			.session{
+				color: #909399;
+				font-size: 20rpx;
+				text-align: center;
+				image{
+					width: 100rpx;
+					height: 100rpx;
+				}
 			}
 		}
 	}

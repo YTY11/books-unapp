@@ -1,5 +1,6 @@
 <template>
 	<view class="directory">
+		
 		<view class="title">{{directoryData.Name}}</view>
 		<view class="" v-for="(list,index) in lists" :key="index">
 			<view class="name">{{list.name}}:
@@ -32,13 +33,15 @@
 				}
 			}
 		},
-		
 		data() {
 			return {
-				num:0
+				num:0,
+				
 			};
 		},
+		
 		methods:{
+			
 			//阅读
 		 	readBook(index,index2,id){
 				this.num = 0

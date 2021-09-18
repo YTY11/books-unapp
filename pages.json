@@ -123,6 +123,19 @@
             }
             
         }
+        ,{
+			//更多页面
+            "path" : "pages/books/more",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "更多",
+                "enablePullDownRefresh": false,
+                "navigationStyle": "custom",
+                "navigationBarTextStyle": "black",
+                "navigationBarBackgroundColor": "#FFFFFF"
+            }
+            
+        }
     ],
 	"globalStyle": {
 		"navigationBarBackgroundColor": "#F1F1F1",

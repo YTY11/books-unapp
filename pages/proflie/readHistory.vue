@@ -1,7 +1,7 @@
 <template>
 	<view class="read-history">
 		<u-navbar title-color="#000000" :title-bold="true" back-text="返回" title="历史记录">
-			<view class="right" slot="right" @click="!show">清除</view>
+			<view class="right" slot="right" @click="isShow">清除</view>
 		</u-navbar>
 		<u-time-line>
 			<u-time-line-item v-for="(item,index) in readHistory" :key="index">
@@ -39,7 +39,11 @@
 			this.readHistory = bookCaseData
 		},
 		methods:{
-			
+			isShow(){
+				if(this.readHistory.length > 0){
+				 this.show = true
+				}
+			},
 			//确认清除历史记录
 			confirm(){
 				uni.setStorageSync('READ_HISTORY_LOG', []);

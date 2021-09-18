@@ -100,9 +100,7 @@
 			}
 		},
 		methods:{
-			
 		  	queryList() {
-				
 				let data = []
 				uni.showLoading({
 					title: '加载中...'
@@ -116,7 +114,7 @@
 					this.dataList = bookCaseData
 					uni.hideLoading();
 					this.$refs.paging.complete(bookCaseData);
-				},1500)
+				},1000)
 				
 					
 

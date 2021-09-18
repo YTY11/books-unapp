@@ -14,7 +14,7 @@
 			</view>
 			<u-gap height="8" bg-color="#EFEFF0"></u-gap>
 		</view>
-		<!-- 功能待开发 -->
+		<!-- 因第三方appid限制 分享，登录退出等功能待开发 -->
 		<!-- <view class="set-item">
 			<view class="set-msg" @click="idea">
 				<image src="../../static/img/proflie/idea.png" mode=""></image>
@@ -22,13 +22,13 @@
 			</view>
 			<u-gap height="8" bg-color="#EFEFF0"></u-gap>
 		</view> -->
-		<view class="set-item">
+		<!-- <view class="set-item">
 			<view class="set-msg" @click="share">
 				<image src="../../static/img/proflie/share.png" mode=""></image>
 				<u-section class="m-section" title="软件分享" color="#B1B3B3" :font-size="30" :bold="false" :show-line="false"  sub-title=""></u-section>
 			</view>
 			<u-gap height="8" bg-color="#EFEFF0"></u-gap>
-		</view>
+		</view> -->
 		<!-- 功能待开发 -->
 		<!-- <view class="set-item">
 			<view class="set-msg"  @click="give">
@@ -44,13 +44,13 @@
 			</view>
 			<u-gap height="8" bg-color="#EFEFF0"></u-gap>
 		</view>
-		<view class="set-item">
+		<!-- <view class="set-item">
 			<view class="set-msg"  @click="exit">
 				<image src="../../static/img/proflie/exit.png" mode=""></image>
 				<u-section class="m-section" title="退出登录" color="#B1B3B3" :font-size="30" :bold="false" :show-line="false"  sub-title=""></u-section>
 			</view>
 			<u-gap height="8" bg-color="#EFEFF0"></u-gap>
-		</view>
+		</view> -->
 		
 		
 		
@@ -83,10 +83,10 @@
 				    provider: "weixin",
 				    scene: "WXSceneSession",//分享到聊天
 				    type: 0,//图文
-				    href: "https://baidu.com/",//链接
+				    href: "http://yty1999.top:1999/readBook.apk",//链接
 				    title: "阅读软件分享",//标题
 				    summary: "温泉里的鱼出品",//描述
-				    imageUrl: "../../static/img/boots_nav/over_book.png",//图片
+				    imageUrl: "../../static/icon.png",//图片
 				    success: function (res) {//成功回调
 				        console.log("success:" + JSON.stringify(res));
 				    },

@@ -1,11 +1,12 @@
 <template>
 	<view class="header">
-		
-		<view class="user-msg" v-if="userData.userImg!==undefined">
-			<image fade-show :src="userData.userImg" mode="" @click="enlarge(userData.userImg)"></image>
-			<view class="user-name">{{userData.userName}}</view>
+		<!-- 因第三方appid限制登陆功能暂时无法使用 -->
+		<!-- v-if="userData.userImg!==undefined" :src="userData.userImg"-->
+		<view class="user-msg" >
+			<image fade-show src="../../static/icon.png" mode="" @click="enlarge(userData.userImg)"></image>
+			<!-- <view class="user-name">{{userData.userName}}</view> -->
 		</view>
-		<button class="user-msg" v-else type="warn" @click="login">一键登录</button>
+		<!-- <button class="user-msg" v-else type="warn" @click="login">一键登录</button> -->
 		
 
 	</view>
@@ -62,7 +63,7 @@
 			//全屏查看图片
 			enlarge(img){  
 			            let arr=[]  
-			            arr.push(img)  
+			            arr.push('../../static/icon.png')  
 			            uni.previewImage({  
 			                urls: arr,  
 			                current: 0,  

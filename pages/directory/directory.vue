@@ -2,7 +2,7 @@
 	<view class="directory">
 		<u-navbar title-color="#000000" :title-bold="true" back-text="返回" title="目录"></u-navbar>
 		<view class="content">
-			<Directory :directoryData="directoryData" :lists="lists"/>
+			<Directory :directoryData="directoryData" :lists="lists" />
 		</view>
 	</view>
 </template>
@@ -10,41 +10,46 @@
 <script>
 	//目录
 	import Directory from '../../components/directory/directory.vue'
-	
+
 	//网络数据
-	import {getBookDirectoryData} from '../../api/book.js'
+	import {
+		getBookDirectoryData
+	} from '../../api/book.js'
 	export default {
-		components:{
+		components: {
 			Directory
 		},
 		data() {
 			return {
-				directoryData:{},
-				lists:[]
+				directoryData: {},
+				lists: []
 			}
 		},
-	 async	onLoad(option) {
+		async onLoad(option) {
 			this.directoryData = JSON.parse(decodeURIComponent(option.data))
 			uni.showLoading({
 				title: '加载中',
 				mask: true
 			})
-		await	this.getBookDirectoryData(this.directoryData.Id)
-		uni.hideLoading()
+			await this.getBookDirectoryData(this.directoryData.Id)
+			this.$nextTick(function(){
+				uni.hideLoading()
+			})
 		},
+		
 		methods: {
-		async	getBookDirectoryData(bookId){
-				
-			await	getBookDirectoryData(bookId).then(res=>{
+			async getBookDirectoryData(bookId) {
+
+				await getBookDirectoryData(bookId).then(res => {
 					//格式化json字符串
 					res = res.replace(/\}\,\]/g, '\}\]')
 					res = JSON.parse(res)
 					if (res.info === "success") {
-						this.lists =  res.data.list;
-						
+						this.lists = res.data.list;
 					}
-				}).catch(err=>{
 					
+				}).catch(err => {
+
 					uni.hideLoading();
 					uni.showModal({
 						title: '连接失败',
@@ -72,7 +77,5 @@
 </script>
 
 <style lang="scss" scoped>
-.directory{
-	
-}
+	.directory {}
 </style>

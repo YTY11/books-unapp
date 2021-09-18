@@ -26,7 +26,7 @@
 		</view>
 	
 		<view class="bottom" slot="bottom">
-			<view class="downloads"><image src="../../static/img/download.png" mode=""></image>下载</view>
+			<view class="downloads" @click="downloads"><image src="../../static/img/download.png" mode=""></image>下载</view>
 			<view class="line"></view>
 			<view class="add-book" :class="{'isAdd':addText=='已添加'}" @click="addBookCase"> <image src="../../static/img/add.png" mode=""></image>{{addText}}</view>
 			<u-button @click="reading" class="read"   :ripple="true" ripple-bg-color="#6CCFEC" type="primary"><image src="../../static/img/read.png" mode=""></image>开始阅读</u-button>
@@ -160,6 +160,15 @@
 				});
 				this.addText = "已添加"
 			},
+			
+			//下载
+			downloads(){
+				uni.showToast({
+					title:'功能开发中...',
+					duration:1500,
+					icon:'none'
+				})
+			}
 			
 		}
 	}

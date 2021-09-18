@@ -1,7 +1,7 @@
 <template>
 	<view class="">
 		<!-- 为你推荐 -->
-		<u-section class="m-section" title="为你推荐" :show-line="false" @click="more"></u-section>
+		<u-section class="m-section" title="为你推荐" :right="false"  :show-line="false" @click="more"></u-section>
 	<view class="books">
 		<ToYouBooksItem v-for="(item,index) in dataList" :item="item" :key="item.Id"/>
 	</view>

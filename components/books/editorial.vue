@@ -26,7 +26,9 @@
 		methods:{
 			//点击更多
 			more(){
-				console.log("editorial");
+				uni.navigateTo({
+					url:`/pages/books/more?title=主编力荐`
+				})
 			},
 		}
 	}

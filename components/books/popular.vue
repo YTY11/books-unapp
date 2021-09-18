@@ -44,7 +44,9 @@
 		methods: {
 			// 点击更多
 			more() {
-				console.log("popular");
+				uni.navigateTo({
+					url:`/pages/books/more?title=今日热门`
+				})
 			},
 			// tabs通知swiper切换
 			tabsChange(index) {
