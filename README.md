@@ -14,25 +14,25 @@
 ### 密码:8tpi
 
 ### 二维码下载：
-![效果](../static/down.png)
+![效果](./img/down.png)
 
 ### 启动效果图：
-![效果](../static/hdpiBg.png)
+![效果](./img/hdpiBg.png)
 
 ### 书架页面：
-![效果](../static/README_files/2.jpg)
+![效果](./img/2.jpg)
 
 ### 书城页面：
-![效果](../static/README_files/1.jpg) ![效果](../static/README_files/4.jpg)
+![效果](./img/1.jpg) ![效果](./img/4.jpg)
 
 ### 个人中心页面：
-![效果](../static/README_files/5.jpg)
+![效果](./img/5.jpg)
 
 ### 详情页面：
-![效果](../static/README_files/3.jpg)
+![效果](./img/3.jpg)
 
 ### 阅读页面：
-![效果](../static/README_files/6.jpg) ![效果](../static/README_files/6.jpg)
+![效果](./img/6.jpg) ![效果](./img/6.jpg)
 
 ##### 软件中资源的使用如有侵权请联系开发者
 ##### 作者：温泉里的鱼
