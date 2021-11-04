@@ -6,11 +6,11 @@
 				<u-tabs-swiper height="0" ref="uTabs" :list="[1,2,3,4,5,6]" :current="current" @change="tabsChange"
 					:is-scroll="false" swiperWidth="750"></u-tabs-swiper>
 			</view>
-			<swiper class="swiper-item" :current="swiperCurrent" @transition="transition"
+			<swiper  class="swiper-item" :current="swiperCurrent" @transition="transition"
 				@animationfinish="animationfinish">
-				<swiper-item v-for="(popular, index) in popularData" :key="index">
+				<swiper-item  v-for="(popular, index) in popularDataNew" :key="popular.id">
 					<scroll-view scroll-y style="height: 420rpx;width: 100%;" @scrolltolower="onreachBottom">
-						<EdAndPopItem v-for="(item,index) in popular" :item="item" :key="item.Id" />
+						<EdAndPopItem v-for="(item,index) in popular.list" :item="item" :key="item.Id" />
 					</scroll-view>
 				</swiper-item>
 			</swiper>
@@ -35,10 +35,29 @@
 				}
 			}
 		},
+		watch: {
+		    popularData: {
+		      handler(nD, oD) {
+				  const data = []
+				  nD.forEach((item, i) => {
+					  if(i >= 2) {
+						  return
+					  }
+					  let n = { id: item[i].Name}
+					  n.list = item
+					  data.push(n)
+				  })
+		        this.popularDataNew = data
+		      },
+		      deep: true,
+		      immediate: true
+		    }
+		  },
 		data() {
 			return {
 				current: 0, // tabs组件的current值，表示当前活动的tab选项
 				swiperCurrent: 0, // swiper组件的current值，表示当前那个swiper-item是活动的
+				popularDataNew: []
 			}
 		},
 		methods: {

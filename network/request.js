@@ -1,9 +1,5 @@
-let baseUrl = ''
-let baseUrl2 = ''
-//#ifdef APP-PLUS
-baseUrl = 'https://sou.jiaston.com'
-baseUrl2 = 'http://shuapi.jiaston.com'
-//#endif
+let baseUrl = 'https://sou.jiaston.com'
+let baseUrl2 = 'http://shuapi.jiaston.com'
 
 //#ifdef H5
 baseUrl = '/api'
@@ -22,6 +18,7 @@ export const request = (options = {}) => {
 			url: baseUrl + options.url || '',
 			method: options.type || 'GET',
 			data: options.data || {},
+			sslVerify: false,
 			header: options.header || {},
 			timeout: TIME_OUT,
 			success: (res) => {
@@ -53,6 +50,7 @@ export const request2 = (options = {}) => {
 			data: options.data || {},
 			header: options.header || {},
 			timeout: TIME_OUT,
+			sslVerify: false,
 			success: (res) => {
 				if(res.statusCode == 500){
 					reject('网络异常 状态码:' +res.statusCode )

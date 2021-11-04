@@ -112,9 +112,12 @@
     "quickapp" : {},
     /* 小程序特有相关 */
     "mp-weixin" : {
-        "appid" : "",
+        "appid" : "wxa2a793bb76d7a0d8",
         "setting" : {
-            "urlCheck" : false
+            "urlCheck" : false,
+            "es6" : true,
+            "postcss" : true,
+            "minified" : true
         },
         "usingComponents" : true,
         "uniStatistics" : {
@@ -145,6 +148,39 @@
     "h5" : {
         "uniStatistics" : {
             "enable" : true
+        },
+        "title" : "悦读",
+        "router" : {
+            "mode" : "history",
+            "base" : "/h5/"
+        },
+        "devServer" : {
+            "https" : true,
+            "port" : 8889,
+            "disableHostCheck" : true,
+            "proxy" : {
+                "/api" : {
+                    // 匹配所有以 '/api1'开头的请求路径
+                    "target" : "https://sou.jiaston.com/", // 代理目标的基础路径
+                    "changeOrigin" : true,
+                    "pathRewrite" : {
+                        "^/api" : ""
+                    }
+                },
+                "/bookApi" : {
+                    // 匹配所有以 '/api1'开头的请求路径
+                    "target" : "http://shuapi.jiaston.com/", // 代理目标的基础路径
+                    "changeOrigin" : true,
+                    "pathRewrite" : {
+                        "^/bookApi" : ""
+                    }
+                }
+            }
+        },
+        "optimization" : {
+            "treeShaking" : {
+                "enable" : true
+            }
         }
     },
     "mp-kuaishou" : {
