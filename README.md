@@ -10,11 +10,12 @@
 >> 5. 书籍API使用 weixin_46291378的博客 ：https://blog.csdn.net/weixin_46291378/article/details/112320747
 >> 6. UI参考：zcool站酷 作者: CI_Chain | UI设计师  https://www.zcool.com.cn/work/ZMzA0NTQ3MTI=.html
 
-### 下载地址：https://wws.lanzoui.com/it5Lyu6shub
-### 密码:8tpi
+### 下载地址：~~https://wws.lanzoui.com/it5Lyu6shub~~
+### [https://wwe.lanzouq.com/iRi5Tw58cuh](https://wwe.lanzouq.com/iRi5Tw58cuh)
+### 密码:ew2g
 
 ### 二维码下载：
-![效果](./img/down.png)
+![效果](./img/qrcode.png)
 
 ### 启动效果图：
 ![效果](./img/hdpiBg.png)
